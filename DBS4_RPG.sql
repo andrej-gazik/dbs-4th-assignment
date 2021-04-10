@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS "classes" CASCADE;
 DROP TABLE IF EXISTS "characters" CASCADE ;
 DROP TABLE IF EXISTS "chat_log_teams" CASCADE;
 DROP TABLE IF EXISTS "chat_log_users" CASCADE;
-DROP TABLE IF EXISTS "class1_level_stat_increments" CASCADE;
+DROP TABLE IF EXISTS "level_stat_increments" CASCADE;
 DROP TABLE IF EXISTS "friends_pending" CASCADE ;
 DROP TABLE IF EXISTS "friends_table" CASCADE;
 DROP TABLE IF EXISTS "ignore_list" CASCADE;
@@ -170,11 +170,16 @@ CREATE TABLE "skills" (
         REFERENCES skills(id)
 );
 
-CREATE TABLE "class1_level_stat_increments" (
+CREATE TABLE "level_stat_increments" (
     "level" bigint PRIMARY KEY,
+    "class" bigint,
     "hp_inc" bigint,
     "atk_inc" bigint,
-    "def_inc" bigint
+    "def_inc" bigint,
+
+    CONSTRAINT fk_level_stat_inc
+        FOREIGN KEY(class)
+        REFERENCES classes(id)
 );
 
 CREATE TABLE "items" (
