@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS "classes" CASCADE;
 DROP TABLE IF EXISTS "characters" CASCADE ;
 DROP TABLE IF EXISTS "chat_log_teams" CASCADE;
 DROP TABLE IF EXISTS "chat_log_users" CASCADE;
+DROP TABLE IF EXISTS "combat_log" CASCADE;
 DROP TABLE IF EXISTS "level_stat_increments" CASCADE;
 DROP TABLE IF EXISTS "friends_pending" CASCADE ;
 DROP TABLE IF EXISTS "friends_table" CASCADE;
@@ -35,12 +36,14 @@ CREATE TABLE "users" (
 
 CREATE TABLE "item_types" (
     "id" bigint PRIMARY KEY,
+    "name" varchar(100),
+    "description" varchar(100),
     "slot" bigint,
     "hp" bigint,
     "atk" bigint,
     "def" bigint,
     "range" bigint,
-    "cool_down" bigint
+    "cooldown" bigint
 );
 
 CREATE TABLE "item_instances" (
@@ -225,8 +228,9 @@ CREATE TABLE "char_team_table" (
 );
 
 CREATE TABLE "levels" (
-    "id" bigint PRIMARY KEY
-
+    "id" bigint PRIMARY KEY,
+    "name" varchar(100),
+    "required_level" int
 );
 
 CREATE TABLE "quest_types" (
@@ -344,8 +348,30 @@ CREATE TABLE "level_entities" (
     "item" bigint,
     "obstacle" bigint,
     "level" bigint,
+    "death_time" timestamp,
 
     CONSTRAINT fk_level_ent
         FOREIGN KEY(level)
         REFERENCES levels(id)
-)
+);
+
+CREATE TABLE "combat_log" (
+    "id" bigint,
+    "time" timestamp,
+    "source" bigint,
+    "target" bigint,
+    "level" bigint,
+    "dmg" bigint,
+    "is_regular_attack" boolean,
+    "skill_used" bigint,
+
+    CONSTRAINT fk_combat_log
+        FOREIGN KEY(source)
+        REFERENCES level_entities(id),
+        FOREIGN KEY(target)
+        REFERENCES level_entities(id),
+        FOREIGN KEY(skill_used)
+        REFERENCES skill_instances(id),
+        FOREIGN KEY(level)
+        REFERENCES levels(id)
+);
