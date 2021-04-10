@@ -91,10 +91,6 @@ CREATE TABLE "skill_instances" (
     CONSTRAINT fk_skill_instances
         FOREIGN KEY(skill_type)
         REFERENCES skill_types(id)
-        --FOREIGN KEY(owner)
-        --REFERENCES characters(id)
-        -- cant reference cuz characters reference this
-        -- but this also references characters
 );
 
 CREATE TABLE "characters" (
@@ -156,6 +152,11 @@ CREATE TABLE "characters" (
         REFERENCES skill_instances(id)
 );
 
+ALTER TABLE "skill_instances"
+    ADD
+    FOREIGN KEY(owner)
+    REFERENCES characters(id);
+
 CREATE TABLE "friends_table" (
     "id" bigint PRIMARY KEY,
     "char_id1" bigint,
@@ -191,9 +192,6 @@ CREATE TABLE "teams" (
     CONSTRAINT fk_teams
         FOREIGN KEY(creator)
         REFERENCES characters(id)
-        --FOREIGN KEY(chat_id)
-        --REFERENCES chat_log_teams(id)
-        -- A refs B, B refs A situation
 );
 
 CREATE TABLE "chat_log_teams" (
@@ -210,6 +208,9 @@ CREATE TABLE "chat_log_teams" (
         REFERENCES teams(id)
 );
 
+ALTER TABLE "teams"
+    ADD FOREIGN KEY(chat_id)
+    REFERENCES chat_log_teams(id);
 
 CREATE TABLE "char_team_table" (
     "id" bigint PRIMARY KEY,
@@ -243,12 +244,6 @@ CREATE TABLE "quest_types" (
         REFERENCES quest_types(id),
         FOREIGN KEY(map_to_visit)
         REFERENCES levels(id)
-        -- FOREIGN KEY(monsters_to_kill_type)
-        -- REFERENCES monster_types(id)
-        -- map to visit ref missing
-        -- idk how to set up this reference rn
-        -- cuz monster_types references this but this
-        -- also references monster_types
 );
 
 CREATE TABLE "quest_instances" (
@@ -276,11 +271,15 @@ CREATE TABLE "monster_types" (
     "xp_drop" bigint,
 
      CONSTRAINT fk_monster_types
-        --FOREIGN KEY(quest_required)
-        --REFERENCES quest_types(id),
+        FOREIGN KEY(quest_required)
+        REFERENCES quest_types(id),
         FOREIGN KEY(monster_slain_required)
         REFERENCES monster_types(id)
 );
+
+ALTER TABLE "quest_types"
+    ADD FOREIGN KEY(monsters_to_kill_type)
+    REFERENCES monster_types(id);
 
 CREATE TABLE "chat_log_users" (
     "id" bigint PRIMARY KEY,
